@@ -11,45 +11,8 @@ the deployment lifecycle.
 Google Kubernetes Engine, Cloud Shell, Kubernetes
 
 ## Implemtation
-### Introduction
 
-  ![image](https://github.com/hieunguyen0202/DevOps-Training/assets/98166568/9446c973-c81c-45d8-93c6-89bbe7b283e1)
-
-  ![image](https://github.com/hieunguyen0202/DevOps-Training/assets/98166568/a420c105-cbf4-40df-a65f-835af2dbf52e)
-
-- First, we have a multitier your web application stack which is already containerized.
-- And we are going to use the vprofile web application which we containerized in our previous projects.
-- So your web application is containerized and you have also tested it.
-- Now it's time to host it for production.
-
-  ![image](https://github.com/hieunguyen0202/DevOps-Training/assets/98166568/ec6b6afc-ee48-4fd7-87db-07a636a2afb5)
-
-- The requirement could be you need `high availability` so your containers don't go down and also high availability on your Compute node requirement is also for `fault tolerance`.
-- If something happens to the containers and they are not responding, they should also `auto heal`.
-- It should be also `convenient to scale containers` and also the `compute resource` on which your containers are running `platform independent` and also portable, flexible, agile.
-- So we should be able to run our containers on local cloud, virtual machines, physical machines and should be able to run on dev QA production.
-
-  
-- Kubernetes is today `the best container orchestration tool` in the market. It's very mature and a rock solid platform to run your containers for production.
-
-  
-- Let's also check some statistics in today's time. Kubernetes is one of the most used tools in the containerized platform and these statistics are here to prove them. 77% of containers today run on Kubernetes. If we include Redshift and Rancher which are already built on Kubernetes, then it's 89%. 56% of the organizations have reported that they're going to increase the usage of Kubernetes in next twelve months and that should be by end of 2020. From 2019% to 2028%, growth in usage of Kubernetes Cluster for production containers. This is a huge number.
-
-  ![image](https://github.com/hieunguyen0202/DevOps-Training/assets/98166568/2403f672-c123-4619-ad41-4488a3fa8316)
-
-- So we can understand kubernetes has taken the Container Orchestration or Container World by a strome. So on this project we are going to use our Java vprofile application which we have Containerized and we're going to run it on Kubernetes Cluster for production.
-
-  ![image](https://github.com/hieunguyen0202/DevOps-Training/assets/98166568/52cbc2b2-2cc8-4fe0-a306-b2fbe6080f99)
-
-- Let's see how we are going to do it. So we need a `Kubernetes cluster already`. And I'm going to `use Cops to launch my Kubernetes cluster`. You can check the project of Kubernetes setup where I've explained how you can `use kops to set up production grade Kubernetes cluster`. We also need `Containerized application`. We are going to use a vprofile. We have already done a project on containerizing our vprofile application. So these are `two main requirements`.
-- We need a Kubernetes cluster and we need Containerized application. And we are using a vprofile application. So you know, in vprofile application we have a MySQL container that needs volume to store its data so we can have persistent data. So for that, we are going to `create an EBS volume to run our DB Pod`. Then we're going to label node with zone names. We're going to create EBS volume in a zone and we need our pod to be running on the same node or on the same zone where we created the EBS volume.
-- So for this, we're going to `label our nodes with zone names`. So when we run our DB pod, we'll select node based on the zones.
-
-  ![image](https://github.com/hieunguyen0202/DevOps-Training/assets/98166568/fac6cfde-0efc-4760-95fa-f65d40d60dab)
-
-- Once we are ready with all the steps, then we are going to write Kubernetes definition files to create our objects on kubernetes cluster, we're going to use deployment service secret and volume.
-
-### 274. Spin K8s Cluster
+### Spin K8s Cluster
 - I am on my AWS Management console. I have an EC2 instance named kops. I have done all the prerequisites for kops. So now just with two commands I'm going to launch the Kubernetes cluster.
 - Now I recommend you to pause the video and do all the prerequisites for kops and launch the Kubernetes cluster. You can check out Kubernetes setup project and do exactly same setup as we did in that project for kops.
   
@@ -89,7 +52,7 @@ Google Kubernetes Engine, Cloud Shell, Kubernetes
   
   ![image](https://github.com/hieunguyen0202/DevOps-Training/assets/98166568/cc319e76-0ac9-4d44-acb1-c2d0dca3d44f)
 
-### 275. Volume Prerqs for DB POD
+### Volume Prerqs for DB POD
 - Now, before we start writing definition files for our pods, we have to create a volume for our DB pod so it can store the mysql data, which gets stored in wire lib mysql into EBS volume.
 - So let's create an EBS volume. AWS ec2 create volume Availability Zone. I have selected us-east-2a, size just three GB.
 
@@ -110,7 +73,7 @@ our own label.
 
 - For GCP, run this command to create the persisent disk `gcloud compute disks create my-disk --size=100GB --region=us-central1`
 
-### 276. Source Code Overview
+### Source Code Overview
 - If you feel that you want to see all the definition file before you make a decision, then search for a branch `kube-app`. In our repository we have a directory here kubernete in this we have a vpro-app and here we have all the [definition files](https://github.com/devopshydclub/vprofile-project/tree/kube-app/kubernetes/vpro-app).
   
   ![image](https://github.com/hieunguyen0202/DevOps-Training/assets/98166568/6009839e-69b7-44fd-86d5-fb308e7d05c2)
@@ -139,7 +102,7 @@ our own label.
 - These are very important information to collect before we create our definition files because we need to define these information so our application can access the back end services.
 - There are two sensitive information over here. One is the database password and next is the RabbitMQ password. And it won't be ideal to put these passwords into text format.
 - So first we have to encrypt this password with secret and then from our pod definition we can access this encrypted passports. Not really encrypted, but encoded.
-### 277. Kube secret for passwords
+### Kube secret for passwords
 - First let's encode our password for `web vprodbpass the password`and `RabbitMQ password` is guest.
 
   ![image](https://github.com/hieunguyen0202/DevOps-Training/assets/98166568/c44b36eb-c0d9-4a5c-8550-d57ed916b974)
@@ -174,7 +137,7 @@ data:
   rmq-pass: Z3Vlc3Q=
 
 ```
-### 278. DB Deployment Definition
+### DB Deployment Definition
 - Now we'll write our `DB definition file`. Rememmber to use image from dockerhub repository.
 
   ![image](https://github.com/hieunguyen0202/DevOps-Training/assets/98166568/db0c1213-10ff-4b5e-bf45-2f661f97933c)
@@ -319,7 +282,7 @@ spec:
 
 
 ```
-### 279. DB Service Definition
+### DB Service Definition
 - Okay, we have to create a service for this DB so our application pod can access it. So I'm going to say DB-CIP cluster IP. We are not going to expose it to the outside world. It's going to only for the internal traffic API version v1 for the Kind service.
 
   ![image](https://github.com/hieunguyen0202/DevOps-Training/assets/98166568/9ba00823-4d59-4307-b617-ee14acd6fb6b)
@@ -341,7 +304,7 @@ spec:
     app: vprodb
   type: ClusterIP
 ```
-### 280. Memcached Deployment & Service
+### Memcached Deployment & Service
 
 - Let's continue with our next Pod definition file or deployment definition file, which is for memcache.
   
@@ -394,7 +357,7 @@ spec:
     app: vpromc 
   type: ClusterIP
 ```
-### 281. RabbitMQ Deployment & Service
+### RabbitMQ Deployment & Service
 - Next RabbitMQ
   
   ![image](https://github.com/hieunguyen0202/DevOps-Training/assets/98166568/47092fe3-d9b5-4ef6-ba41-588bb7fead7a)
@@ -454,7 +417,7 @@ spec:
   type: ClusterIP
 ```
 
-### 282. Tomcat Deployment, Service & Init containers
+### Tomcat Deployment, Service & Init containers
 - Now our main hero tomcat application. So file vproappdep.yaml.
   
   ![image](https://github.com/hieunguyen0202/DevOps-Training/assets/98166568/018f4a78-d1f3-4174-aa45-90c89702c3ab)
@@ -515,7 +478,7 @@ spec:
   type: LoadBalancer
 ```
 
-### 283. Provision Stack on K8s Cluster
+### Provision Stack on K8s Cluster
 - Commit and push
 
   ![image](https://github.com/hieunguyen0202/DevOps-Training/assets/98166568/455f1057-55d1-4db2-a55d-6791c62c5cd0)
@@ -549,7 +512,7 @@ spec:
 
 - All the services are verified. So from containerisation of our project. Now we are running our containerized application on production grade Kubernetes cluster.
 
-### 284. URL for Website & Wrap up
+### URL for Website & Wrap up
 - We have an endpoint and we can also put this into our GoDaddy. Or we can also use route 53, put the CNAME entry.
 
   
