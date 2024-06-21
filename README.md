@@ -1,3 +1,16 @@
+## Summary
+- Launch a GKE cluster with three nodes, ensuring high availability and scalability for Java application.
+- Utilize persistent disks to maintain data integrity and availability across pods, providing a reliable
+storage solution for application components.
+- Write detailed YAML definitions for deploying various components including the database, memcached,
+RabbitMQ, Tomcat application server, and secret services.
+- Use the command kubectl apply -f . to deploy all services and components to the Kubernetes cluster.
+Manage all aspects of application deployment from a single source, enhancing control and visibility over
+the deployment lifecycle.
+## Technologies: 
+Google Kubernetes Engine, Cloud Shell, Kubernetes
+
+## Implemtation
 ### Introduction
 
   ![image](https://github.com/hieunguyen0202/DevOps-Training/assets/98166568/9446c973-c81c-45d8-93c6-89bbe7b283e1)
